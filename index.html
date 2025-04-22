@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestão de Vendas</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f8f8f8; }
+    h1 { color: #333; }
+    label { display: block; margin-top: 10px; }
+    select, input, button { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+    .btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <h1>Gestão de Vendas</h1>
+  <form id="vendaForm">
+    <label for="data">Data:</label>
+    <input type="date" id="data" required>
+
+    <label for="cliente">Nome do Cliente:</label>
+    <input type="text" id="cliente" required>
+
+    <label for="localizador">Localizador:</label>
+    <input type="text" id="localizador" required>
+
+    <label for="titular">Titular:</label>
+    <select id="titular" required>
+      <option value="NELI">NELI</option>
+      <option value="THUCA">THUCA</option>
+      <option value="FABIULA">FABIULA</option>
+      <option value="FABIANA">FABIANA</option>
+      <option value="HERBERT">HERBERT</option>
+    </select>
+
+    <label for="valorWallet">Valor Wallet (R$):</label>
+    <input type="text" id="valorWallet" required>
+
+    <label for="desagio">Deságio (%):</label>
+    <input type="text" id="desagio" required>
+
+    <label for="emissor">Emissor:</label>
+    <select id="emissor" required>
+      <option value="DANIEL">DANIEL</option>
+      <option value="THUCA">THUCA</option>
+      <option value="HERBERT">HERBERT</option>
+    </select>
+
+    <button type="button" onclick="registrarVenda()">Registrar Venda</button>
+  </form>
+
+  <h2>Histórico de Vendas</h2>
+  <table id="tabelaVendas">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Cliente</th>
+        <th>Localizador</th>
+        <th>Titular</th>
+        <th>Valor Wallet (R$)</th>
+        <th>Deságio (%)</th>
+        <th>Receita (R$)</th>
+        <th>Custo Wallet (R$)</th>
+        <th>Lucro (R$)</th>
+        <th>Emissor</th>
+      </tr>
+    </thead>
+    <tbody id="vendasBody"></tbody>
+  </table>
+
+  <script>
+    let vendas = [];
+
+    function registrarVenda() {
+      const data = document.getElementById('data').value;
+      const cliente = document.getElementById('cliente').value;
+      const localizador = document.getElementById('localizador').value;
+      const titular = document.getElementById('titular').value;
+      const valorWallet = parseFloat(document.getElementById('valorWallet').value.replace(",", "."));
+      const desagio = parseFloat(document.getElementById('desagio').value.replace(",", "."));
+      const emissor = document.getElementById('emissor').value;
+
+      if (!data || !cliente || !localizador || !titular || isNaN(valorWallet) || isNaN(desagio) || !emissor) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+      }
+
+      const receita = valorWallet - (valorWallet * (desagio / 100));
+      const custoWallet = valorWallet * 0.1003;
+      const lucro = receita - custoWallet;
+
+      const novaVenda = {
+        data, cliente, localizador, titular, valorWallet, desagio, receita, custoWallet, lucro, emissor
+      };
+
+      vendas.push(novaVenda);
+      atualizarTabela();
+      document.getElementById('vendaForm').reset();
+    }
+
+    function atualizarTabela() {
+      const tbody = document.getElementById('vendasBody');
+      tbody.innerHTML = '';
+      vendas.forEach(venda => {
+        const linha = tbody.insertRow();
+        linha.insertCell(0).innerText = venda.data;
+        linha.insertCell(1).innerText = venda.cliente;
+        linha.insertCell(2).innerText = venda.localizador;
+        linha.insertCell(3).innerText = venda.titular;
+        linha.insertCell(4).innerText = venda.valorWallet.toFixed(2).replace(".", ",");
+        linha.insertCell(5).innerText = venda.desagio.toFixed(2).replace(".", ",");
+        linha.insertCell(6).innerText = venda.receita.toFixed(2).replace(".", ",");
+        linha.insertCell(7).innerText = venda.custoWallet.toFixed(2).replace(".", ",");
+        linha.insertCell(8).innerText = venda.lucro.toFixed(2).replace(".", ",");
+        linha.insertCell(9).innerText = venda.emissor;
+      });
+    }
+  </script>
+</body>
+</html>
