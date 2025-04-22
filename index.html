@@ -66,7 +66,7 @@
         <th>Deságio (%)</th>
         <th>Custo Wallet (R$)</th>
         <th>Lucro (R$)</th>
-        <th>Emissor</th>
+        <th>Emissor</th><th>Ações</th>
       </tr>
     </thead>
     <tbody id="vendasBody"></tbody>
@@ -105,7 +105,7 @@
     function atualizarTabela() {
       const tbody = document.getElementById('vendasBody');
       tbody.innerHTML = '';
-      vendas.forEach(venda => {
+      vendas.forEach((venda, index) => {
         const linha = tbody.insertRow();
         linha.insertCell(0).innerText = venda.data;
         linha.insertCell(1).innerText = venda.cliente;
@@ -117,8 +117,41 @@
         linha.insertCell(7).innerText = venda.custoWallet.toFixed(2).replace(".", ",");
         linha.insertCell(8).innerText = venda.lucro.toFixed(2).replace(".", ",");
         linha.insertCell(9).innerText = venda.emissor;
+        const acoes = linha.insertCell(10);
+        acoes.innerHTML = `
+          <button onclick="editarVenda(${index})">Editar</button>
+          <button onclick="cancelarVenda(${index})">Cancelar</button>
+          <button onclick="apagarVenda(${index})">Apagar</button>
+        `;
+    
       });
     }
-  </script>
+  
+    function editarVenda(index) {
+      const venda = vendas[index];
+      document.getElementById('data').value = venda.data;
+      document.getElementById('cliente').value = venda.cliente;
+      document.getElementById('localizador').value = venda.localizador;
+      document.getElementById('titular').value = venda.titular;
+      document.getElementById('valorWallet').value = venda.valorWallet.toFixed(2).replace(".", ",");
+      document.getElementById('receita').value = venda.receita.toFixed(2).replace(".", ",");
+      document.getElementById('emissor').value = venda.emissor;
+      vendas.splice(index, 1); // remove temporariamente para atualizar
+      atualizarTabela();
+    }
+
+    function cancelarVenda(index) {
+      vendas[index].cliente += " (CANCELADO)";
+      atualizarTabela();
+    }
+
+    function apagarVenda(index) {
+      if (confirm("Tem certeza que deseja apagar esta venda?")) {
+        vendas.splice(index, 1);
+        atualizarTabela();
+      }
+    }
+</script>
+
 </body>
 </html>
