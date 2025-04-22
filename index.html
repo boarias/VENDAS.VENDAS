@@ -53,7 +53,17 @@
     <button type="button" onclick="registrarVenda()">Registrar Venda</button>
   </form>
 
-  <h2>Histórico de Vendas</h2>
+  
+    <h2>Saldo por Titular</h2>
+    <ul id="saldosTitulares">
+      <li>FABIULA: R$ <span id="saldo-FABIULA">0,00</span></li>
+      <li>THUCA: R$ <span id="saldo-THUCA">0,00</span></li>
+      <li>NELI: R$ <span id="saldo-NELI">0,00</span></li>
+      <li>FABIANA: R$ <span id="saldo-FABIANA">0,00</span></li>
+      <li>HERBERT: R$ <span id="saldo-HERBERT">0,00</span></li>
+    </ul>
+    <h2>Histórico de Vendas</h2>
+    
   <table id="tabelaVendas">
     <thead>
       <tr id="linha-${index}">
@@ -102,10 +112,27 @@
       document.getElementById('vendaForm').reset();
     }
 
+    
     function atualizarTabela() {
+      const saldos = {
+FABIULA: 54672.90,
+THUCA: 1697.36,
+NELI: 44212.33,
+FABIANA: 0.00,
+HERBERT: 0.00,
+      };
+    
       const tbody = document.getElementById('vendasBody');
       tbody.innerHTML = '';
+      for (let t in saldos) {
+        document.getElementById("saldo-" + t).innerText = saldos[t].toLocaleString("pt-BR", {minimumFractionDigits: 2});
+      }
+      
       vendas.forEach((venda, index) => {
+        if (!venda.cancelado) {
+          saldos[venda.titular] += venda.valorWallet;
+        }
+    
         const linha = tbody.insertRow();
         linha.insertCell(0).innerText = venda.data;
         linha.insertCell(1).innerText = venda.cliente;
